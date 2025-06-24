@@ -4,22 +4,21 @@ import { serve } from "bun";
 import mysql from "mysql2/promise";
 
 const app = new Hono();
-app.use("/*", cors()); // Permitir solicitudes CORS (desde GameMaker)
+app.use("/*", cors());
 
-// Ruta GET simple
-app.get("/", (c) => c.text("API corriendo correctamente"));
+// Ruta de prueba
+app.get("/", (c) => c.text("API funcionando"));
 
-// Ruta POST para consulta
-app.post("/api/consultar", async (c) => {
+// Ruta para consultar un ingrediente por su nombre
+app.post("/api/ingrediente", async (c) => {
   const body = await c.req.json();
-  const usuario = body.usuario;
+  const nombre = body.nombre;
 
-  if (!usuario) {
-    return c.json({ error: "Falta el parámetro 'usuario'" }, 400);
+  if (!nombre) {
+    return c.json({ error: "Falta el parámetro 'nombre'" }, 400);
   }
 
   try {
-    // Conexión a tu base de datos Railway
     const connection = await mysql.createConnection({
       host: "switchback.proxy.rlwy.net",
       user: "root",
@@ -28,18 +27,17 @@ app.post("/api/consultar", async (c) => {
       port: 44995,
     });
 
-    // Consulta parametrizada
     const [rows]: any = await connection.execute(
-      "SELECT * FROM jugadores WHERE nombre = ?",
-      [usuario]
+      "SELECT * FROM ingredientes WHERE nombre = ?",
+      [nombre]
     );
 
     await connection.end();
 
     if (rows.length > 0) {
-      return c.json(rows[0]); // Retorna los datos del jugador
+      return c.json(rows[0]); // Devuelve el primer ingrediente que coincida
     } else {
-      return c.json({ error: "Usuario no encontrado" }, 404);
+      return c.json({ error: "Ingrediente no encontrado" }, 404);
     }
   } catch (err) {
     console.error(err);
@@ -47,8 +45,8 @@ app.post("/api/consultar", async (c) => {
   }
 });
 
-// Iniciar servidor
 serve({
   fetch: app.fetch,
   port: process.env.PORT || 3000,
 });
+
