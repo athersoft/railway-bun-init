@@ -8,15 +8,9 @@ app.use("/*", cors());
 
 app.post("/api/ingrediente", async (c) => {
   const body = await c.req.json();
-  const nombre = body.nombre;
+  return c.json({ mensaje: "Todo bien", recibido: body });
+});
 
-  const connection = await mysql.createConnection({
-    host: "switchback.proxy.rlwy.net",
-    user: "root",
-    password: "wOBsxvHGHTYEelUkVODnQNQFLMUJXAIe",
-    database: "railway",
-    port: 44995,
-  });
 
   const [rows]: any = await connection.execute(
     "SELECT * FROM ingredientes WHERE nombre = ?",
