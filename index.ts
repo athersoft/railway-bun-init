@@ -7,9 +7,15 @@ const app = new Hono();
 app.use("/*", cors());
 
 app.post("/api/ingrediente", async (c) => {
-  const body = await c.req.json();
-  return c.json({ mensaje: "Todo bien", recibido: body });
+  try {
+    const body = await c.req.json();
+    return c.json({ mensaje: "Todo bien", recibido: body });
+  } catch (e) {
+    console.error("Error parseando JSON:", e);
+    return c.json({ error: "JSON inválido o no enviado" }, 400);
+  }
 });
+
 
 
   const [rows]: any = await connection.execute(
