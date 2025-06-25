@@ -31,6 +31,7 @@ app.post("/api/ingrediente", async (c) => {
     return c.json({ error: "Ingrediente no encontrado" }, 404);
   }
 });
+console.log("PUERTO:", process.env.PORT);
 
 serve({
   fetch: app.fetch,
