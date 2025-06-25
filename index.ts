@@ -32,6 +32,10 @@ app.post("/api/ingrediente", async (c) => {
   }
 });
 
-serve({ fetch: app.fetch, port: process.env.PORT || 3000 });
+serve({
+  fetch: app.fetch,
+  port: Number(process.env.PORT) || 3000,
+});
+
 
 
